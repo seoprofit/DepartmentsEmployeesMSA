@@ -1,0 +1,54 @@
+app:
+  default-value-salary-fund: 1000.0
+  topic-name: department-topic
+server:
+  port: 8882
+spring:
+  application:
+    name: DEPARTMENTS-SERVICE
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: create-drop
+
+  main:
+    allow-bean-definition-overriding: true
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  datasource:
+    url: jdbc:postgresql://postgres-departments:5433/postgres?createDatabaseIfNotExist=true
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-main.yml
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  name: DEPARTMENTS-SERVICE
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        failure-rate-threshold: 60
+    instances:
+      employees-service:
+        base-config: default
+
+kafka:
+  topics:
+    test-topic: department

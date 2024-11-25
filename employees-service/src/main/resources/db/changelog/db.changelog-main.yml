@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: K.V.Vorobyev
+      changes:
+        - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(20)
+              - column:
+                  name: surname
+                  type: varchar(20)
+              - column:
+                  name: patronymic
+                  type: varchar(20)
+              - column:
+                  name: date_of_birth
+                  type: date
+              - column:
+                  name: sex
+                  type: character
+              - column:
+                  name: number
+                  type: varchar(18)
+              - column:
+                  name: date_of_fire
+                  type: date
+              - column:
+                  name: date_of_hire
+                  type: date
+              - column:
+                  name: chief
+                  type: boolean
+              - column:
+                  name: salary
+                  type: real
+              - column:
+                  name: department_id
+                  type: int
+        - createTable:
+            tableName: department_snapshot
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: department_id
+                  type: bigint
+              - column:
+                  name: name
+                  type: varchar(20)
+        - sqlFile:
+            path: db/changelog/changes/insert_test_data.sql
+            encoding: UTF-8

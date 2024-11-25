@@ -1,0 +1,53 @@
+server:
+  port: 8881
+spring:
+  application:
+    name: EMPLOYEES-SERVICE
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: create-drop
+
+  main:
+    allow-bean-definition-overriding: true
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  datasource:
+    url: jdbc:postgresql://postgres-employees:5434/postgres?createDatabaseIfNotExist=true
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-main.yml
+
+eureka:
+  name: EMPLOYEES-SERVICE
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+
+ribbon:
+  eureka:
+    enabled: true
+  read-timeout: 20000
+  connect-timeout: 20000
+
+kafka:
+  topics:
+    test-topic: department

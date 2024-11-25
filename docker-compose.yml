@@ -1,0 +1,107 @@
+services:
+
+  spring-cloud-gateway-server:
+    build: ./spring-cloud-gateway-server
+    ports:
+      - "8765:8765"
+    working_dir: /app
+    networks:
+      - msa
+    environment:
+      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/"
+    depends_on:
+      - eureka-server
+
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    working_dir: /app
+    depends_on:
+      - kafka
+    networks:
+      - msa
+  
+  employee-service:
+    build: ./employees-service
+    ports:
+      - "8881:8881"
+    working_dir: /app
+    depends_on:
+      - eureka-server
+      - postgres-employees
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-employees:5432/postgres"
+      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/"
+    restart: always
+    networks:
+      - msa
+
+  department-service:
+    build: ./departments-service
+    ports:
+      - "8882:8882"
+    working_dir: /app
+    depends_on:
+      - eureka-server
+      - postgres-departments
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-departments:5432/postgres"
+      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/"
+    restart: always
+    networks:
+      - msa
+
+  postgres-employees:
+    image: postgres:13.16-bookworm
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=postgres
+    ports:
+      - "5434:5432"
+    restart: always
+    networks:
+      - msa
+  
+  postgres-departments:
+    image: postgres:13.16-bookworm
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=postgres
+    ports:
+      - "5433:5432"
+    restart: always
+    networks:
+      - msa
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - msa
+
+  kafka:
+    image: bitnami/kafka:3.3.2-debian-12-r34
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+    networks:
+      - msa
+
+
+
+networks:
+  msa:
+    driver: bridge

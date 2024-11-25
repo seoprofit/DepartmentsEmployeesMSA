@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: K.V.Vorobyev
+      changes:
+        - createTable:
+            tableName: department
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(20)
+              - column:
+                  name: date_of_creation
+                  type: date
+              - column:
+                  name: parent_department
+                  type: varchar(50)
+              - column:
+                  name: chief
+                  type: varchar(20)
+
+
+        - createTable:
+            tableName: department_salary
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(20)
+              - column:
+                  name: department_summary
+                  type: real
+        - createTable:
+            tableName: department_manipulation
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: departments_name
+                  type: varchar(20)
+              - column:
+                  name: operation
+                  type: varchar(20)
+              - column:
+                  name: date
+                  type: timestamp
+
+        - sqlFile:
+            path: db/changelog/changes/insert_test_data.sql
+            encoding: UTF-8

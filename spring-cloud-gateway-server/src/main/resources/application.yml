@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: SPRING-CLOUD-GATEWAY-SERVER
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  gateway:
+    metrics:
+      enabled: true
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      routes:
+        - id: EMPLOYEES-SERVICE
+          uri: lb://EMPLOYEES-SERVICE
+          predicates:
+            - Path=/api/employees/**
+        - id: DEPARTMENTS-SERVICE
+          uri: lb://DEPARTMENTS-SERVICE
+          predicates:
+            - Path=/api/departments/**
+
+server:
+  port: 8765
+
+eureka:
+  name: SPRING-CLOUD-GATEWAY-SERVER
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+  server:
+    enable-self-preservation: false

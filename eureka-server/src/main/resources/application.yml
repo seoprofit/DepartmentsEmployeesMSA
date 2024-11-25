@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: EUREKA-SERVER
+
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+  server:
+    enable-self-preservation: false
